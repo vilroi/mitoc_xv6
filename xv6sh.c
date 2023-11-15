@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <err.h>
 
 // Simplifed xv6 shell.
 
@@ -61,8 +62,9 @@ runcmd(struct cmd *cmd)
     ecmd = (struct execcmd*)cmd;
     if(ecmd->argv[0] == 0)
       exit(0);
-    fprintf(stderr, "exec not implemented\n");
-    // Your code here ...
+    //fprintf(stderr, "exec not implemented\n");
+	if (execvp(ecmd->argv[0], ecmd->argv) == -1)
+		err(1, "execlp failed");
     break;
 
   case '>':

@@ -1,14 +1,14 @@
 CC = gcc
-CFILES = xv6.sh
-MODFILES = xv6.o
+CFILES = xv6sh.c
+MODFILES = xv6sh.o
 
-xv6: $(MODFILES)
+xv6sh: $(MODFILES)
 	$(CC) $(MODFILES) -o $@
 
-xv6.o: xv6.c
-	$(CC) $@
+xv6sh.o: xv6sh.c
+	$(CC) -c $<
 
 clean: 
-	rm xv6 *o
+	rm xv6sh *o *out
 
 .PHONY: clean
