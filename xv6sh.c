@@ -28,7 +28,7 @@ struct redircmd {
   int type;          // < or > 
   struct cmd *cmd;   // the command to be run (e.g., an execcmd)
   char *file;        // the input/output file
-  int mode;          // the mode to open the file with
+  int flags;          // the flags to open the file with
   int fd;            // the file descriptor number to use for the file
 };
 
@@ -46,6 +46,8 @@ void
 runcmd(struct cmd *cmd)
 {
   int p[2], r;
+  int		tmpfd;
+  int		mode;
   struct execcmd *ecmd;
   struct pipecmd *pcmd;
   struct redircmd *rcmd;
@@ -72,6 +74,9 @@ runcmd(struct cmd *cmd)
     rcmd = (struct redircmd*)cmd;
     fprintf(stderr, "redir not implemented\n");
     // Your code here ...
+	mode = S_IRUSR | S_IWUSR;
+	if ((tmpfd = open(rcmd->file, rcmd->flags, mode)) == -1)
+		err(1, "open faied");
     runcmd(rcmd->cmd);
     break;
 
@@ -152,7 +157,7 @@ redircmd(struct cmd *subcmd, char *file, int type)
   cmd->type = type;
   cmd->cmd = subcmd;
   cmd->file = file;
-  cmd->mode = (type == '<') ?  O_RDONLY : O_WRONLY|O_CREAT|O_TRUNC;
+  cmd->flags = (type == '<') ?  O_RDONLY : O_WRONLY|O_CREAT|O_TRUNC;
   cmd->fd = (type == '<') ? 0 : 1;
   return (struct cmd*)cmd;
 }
