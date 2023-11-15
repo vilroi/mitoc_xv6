@@ -13,6 +13,11 @@
 
 #define MAXARGS 10
 
+enum {
+	PIPE_READFD = 0,
+	PIPE_WRITEFD = 1,
+};
+
 // All commands have at least a type. Have looked at the type, the code
 // typically casts the *cmd to some specific cmd type.
 struct cmd {
@@ -85,8 +90,27 @@ runcmd(struct cmd *cmd)
 
   case '|':
     pcmd = (struct pipecmd*)cmd;
-    fprintf(stderr, "pipe not implemented\n");
+    //fprintf(stderr, "pipe not implemented\n");
     // Your code here ...
+	if (pipe(p) == -1)
+		err(1, "pipe failed");
+
+	// left child proc 
+	if (fork1() == 0) {
+		close(p[PIPE_READFD]);
+		if (dup2(p[PIPE_WRITEFD], STDOUT_FILENO) < 0)
+			err(1, "dup2 failed for left pipe process");
+
+		runcmd(pcmd->left);
+	}
+
+	// right child proc 
+	if (fork1() == 0) {
+		close(p[PIPE_WRITEFD]);
+		if (dup2(p[PIPE_READFD], STDIN_FILENO) < 0)
+			err(1, "dup2 failed for right pipe process");
+		runcmd(pcmd->right);;
+	}
     break;
   }    
   exit(0);
