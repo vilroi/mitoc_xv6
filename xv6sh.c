@@ -72,11 +72,14 @@ runcmd(struct cmd *cmd)
   case '>':
   case '<':
     rcmd = (struct redircmd*)cmd;
-    fprintf(stderr, "redir not implemented\n");
+    //fprintf(stderr, "redir not implemented\n");
     // Your code here ...
 	mode = S_IRUSR | S_IWUSR;
 	if ((tmpfd = open(rcmd->file, rcmd->flags, mode)) == -1)
 		err(1, "open faied");
+
+	if (dup2(tmpfd, rcmd->fd) < 0)
+		err(1, "dup2 failed");
     runcmd(rcmd->cmd);
     break;
 
