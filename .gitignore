@@ -1,1 +1,1 @@
-*.o xv6sh *.swp
+*.o xv6sh *.swp test*

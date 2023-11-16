@@ -71,7 +71,7 @@ runcmd(struct cmd *cmd)
       exit(0);
     //fprintf(stderr, "exec not implemented\n");
 	if (execvp(ecmd->argv[0], ecmd->argv) == -1)
-		err(1, "execlp failed");
+		err(1, "execlp failed to execute '%s'", ecmd->argv[0]);
     break;
 
   case '>':
@@ -81,7 +81,7 @@ runcmd(struct cmd *cmd)
     // Your code here ...
 	mode = S_IRUSR | S_IWUSR;
 	if ((tmpfd = open(rcmd->file, rcmd->flags, mode)) == -1)
-		err(1, "open faied");
+		err(1, "failed to open '%s'", rcmd->file);
 
 	if (dup2(tmpfd, rcmd->fd) < 0)
 		err(1, "dup2 failed");
@@ -109,8 +109,9 @@ runcmd(struct cmd *cmd)
 		close(p[PIPE_WRITEFD]);
 		if (dup2(p[PIPE_READFD], STDIN_FILENO) < 0)
 			err(1, "dup2 failed for right pipe process");
-		runcmd(pcmd->right);;
+		runcmd(pcmd->right);
 	}
+
     break;
   }    
   exit(0);
