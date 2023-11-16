@@ -1,3 +1,5 @@
+## Notes
+
 ### Implementation of pipes:
 
 I have created the following shell script, and have ran the following command. 
@@ -18,7 +20,7 @@ The resulting process tree is shown below.
 ```
 
 As shown by the output of pstree, the three processes that are connected with pipes are all siblings, and share a common parent.
-It is the responsibility of the parent process to wait(2), allowing the system to release the associated resources of the cihld.
+It is the responsibility of the parent process to call wait(2), allowing the system to release the associated resources of the child.
 
 Perhaps something like the following is needed:
 ```c
